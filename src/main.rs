@@ -102,7 +102,7 @@ fn main() -> Result<()> {
             // something about this block in the lapin example is lazy; adding this info! gets it to run
             info!("[publisher] confirmation: {:?}", &confirmation);
             assert_eq!(confirmation, Confirmation::NotRequested);
-            thread::sleep(Duration::from_secs(3));
+            thread::sleep(Duration::from_millis(100));
         }
 
     })
