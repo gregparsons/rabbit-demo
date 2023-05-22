@@ -77,11 +77,6 @@ fn main() -> Result<()> {
         }).detach();
         info!("spawned consumer; spawning publisher");
 
-
-
-
-
-
         // publish a message
         let mut s = flexbuffers::FlexbufferSerializer::new();
 
