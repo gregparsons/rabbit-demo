@@ -1,7 +1,7 @@
 # RabbitMQ Demo per Lapin
 
 ## Howto
-- docker run -d --hostname host-rabbit --name rabbit -e RABBITMQ_DEFAULT_VHOST=my_vhost -p 5672:5672 -p 15672:15672 rabbitmq:3-management
+- docker run -d --rm --hostname host-rabbit --name rabbit -e RABBITMQ_DEFAULT_VHOST=my_vhost -p 5672:5672 -p 15672:15672 rabbitmq:3-management
 - http://localhost:15672/
 
 ## References

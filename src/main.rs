@@ -7,9 +7,16 @@ use lapin::{
     options::*, publisher_confirm::Confirmation, types::FieldTable, BasicProperties, Connection,
     ConnectionProperties, Result,
 };
+use serde_json::json;
 use tracing::info;
+use serde::{Deserialize, Serialize};
 
 const CHANNEL_A:&'static str = "channel_a";
+
+#[derive(Debug, Serialize, Deserialize)]
+struct HelloMessage{
+    message:String,
+}
 
 fn main() -> Result<()> {
 
@@ -47,13 +54,19 @@ fn main() -> Result<()> {
             while let Some(message_result) = consumer.next().await {
                 let message = message_result.expect("error in consumer");
                 info!("[consumer] message: {:?}", &message);
+
+                match serde_json::from_slice::<HelloMessage>(message.data.clone().as_slice()) {
+                    Ok(json)=>info!("[consumer] json: {:?}", &json),
+                    Err(e)=>info!("[consumer] json error {:?}", &e)
+                }
                 message.ack(BasicAckOptions::default()).await.expect("ack");
             }
         }).detach();
         info!("spawned consumer; spawning publisher");
 
         // publish a message
-        let payload = b"Hello world!";
+        let payload = json!(HelloMessage{message:"Hello, world".to_string()}).to_string();
+        let payload = payload.as_bytes();
         loop {
             let confirmation = channel_a.basic_publish("", CHANNEL_A, BasicPublishOptions::default(), payload, BasicProperties::default()).await?.await?;
             // something about this block in the lapin example is lazy; adding this info! gets it to run
