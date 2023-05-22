@@ -7,20 +7,20 @@ use lapin::{
     options::*, publisher_confirm::Confirmation, types::FieldTable, BasicProperties, Connection,
     ConnectionProperties, Result,
 };
-use serde_json::json;
+// use serde_json::json;
 use tracing::info;
 use serde::{Deserialize, Serialize};
+use uuid::Uuid;
 
 const CHANNEL_A:&'static str = "channel_a";
 
 #[derive(Debug, Serialize, Deserialize)]
 struct HelloMessage{
+    id:Uuid,
     message:String,
 }
 
 fn main() -> Result<()> {
-
-
 
     if std::env::var("RUST_LOG").is_err() {
         std::env::set_var("RUST_LOG", "info");
@@ -53,21 +53,51 @@ fn main() -> Result<()> {
             info!("consume");
             while let Some(message_result) = consumer.next().await {
                 let message = message_result.expect("error in consumer");
-                info!("[consumer] message: {:?}", &message);
 
-                match serde_json::from_slice::<HelloMessage>(message.data.clone().as_slice()) {
-                    Ok(json)=>info!("[consumer] json: {:?}", &json),
-                    Err(e)=>info!("[consumer] json error {:?}", &e)
+                // info!("[consumer] message: {:?}", &message);
+
+                // json deserialize
+                // match serde_json::from_slice::<HelloMessage>(message.data.clone().as_slice()) {
+                //     Ok(json)=>info!("[consumer] json: {:?}", &json),
+                //     Err(e)=>info!("[consumer] json error {:?}", &e)
+                // }
+
+                // flexbuffer deserialize
+
+                // let mut hello_message = message.data.clone().as_slice();
+
+                match flexbuffers::from_slice::<HelloMessage>(message.data.clone().as_slice()){
+                    Ok(hello_message)=>{
+                        info!("[consumer] received (via flexbuffer): {:?}", &hello_message)
+                    },
+                    Err(e)=>info!("[consumer] flexbuffer deserialize error {:?}", &e)
                 }
                 message.ack(BasicAckOptions::default()).await.expect("ack");
             }
         }).detach();
         info!("spawned consumer; spawning publisher");
 
+
+
+
+
+
         // publish a message
-        let payload = json!(HelloMessage{message:"Hello, world".to_string()}).to_string();
-        let payload = payload.as_bytes();
+        let mut s = flexbuffers::FlexbufferSerializer::new();
+
+
+        // json -> serde
+        // let payload = json!(HelloMessage{message:"Hello, world".to_string()}).to_string();
+        // let payload = payload.as_bytes();
+
         loop {
+
+            // flexbuffers -> serde
+            let flex_hello = HelloMessage{ id:Uuid::new_v4(), message:"Hello, world".to_string()};
+            info!("[publisher] sending: {:?}", &flex_hello);
+            flex_hello.serialize(&mut s).unwrap();
+            let payload = s.view();
+
             let confirmation = channel_a.basic_publish("", CHANNEL_A, BasicPublishOptions::default(), payload, BasicProperties::default()).await?.await?;
             // something about this block in the lapin example is lazy; adding this info! gets it to run
             info!("[publisher] confirmation: {:?}", &confirmation);

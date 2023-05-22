@@ -7,3 +7,4 @@
 ## References
 - https://docs.rs/lapin/2.2.1/lapin/
 - https://hub.docker.com/_/rabbitmq/
+- https://flatbuffers.dev/index.html#autotoc_md4
