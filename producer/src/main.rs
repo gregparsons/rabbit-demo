@@ -41,57 +41,19 @@ async fn main_async()->Result<()>{
 
     // let addr = std::env::var("AMQP_ADDR").unwrap_or_else(|_| "amqp://127.0.0.1:5672/%2f".into());
     // let addr = std::env::var("AMQP_ADDR").unwrap_or_else(|_| "amqp://127.0.0.1:5672".into());
+
+    // outside docker
     let addr = std::env::var("AMQP_ADDR").unwrap_or_else(|_| "amqp://127.0.0.1:5672/my_vhost".into());
+
+    // docker: host-rabbit defined in broker startup
+    // let addr = std::env::var("AMQP_ADDR").unwrap_or_else(|_| "amqp://host-rabbit/my_vhost".into());
 
     let conn = Connection::connect(&addr, ConnectionProperties::default()).await?;
     info!("CONNECTED");
 
     let channel_a = conn.create_channel().await?;
-    let channel_b = conn.create_channel().await?;
 
-    // establish queue named hello
-    let queue = channel_a.queue_declare(CHANNEL_A, QueueDeclareOptions::default(), FieldTable::default()).await?;
-    info!(?queue, "Declared queue");
-
-
-    // consumer thread
-    /*
-    let mut consumer = channel_b
-        .basic_consume(CHANNEL_A, "my_consumer", BasicConsumeOptions::default(), FieldTable::default())
-        .await?;
-
-
-    let _join_handle_consumer = tokio::spawn(async move {
-        info!("consume");
-        while let Some(message_result) = consumer.next().await {
-            let message = message_result.expect("error in consumer");
-            // info!("[consumer] message: {:?}", &message);
-
-            // json deserialize
-            // match serde_json::from_slice::<HelloMessage>(message.data.clone().as_slice()) {
-            //     Ok(json)=>info!("[consumer] json: {:?}", &json),
-            //     Err(e)=>info!("[consumer] json error {:?}", &e)
-            // }
-
-            // flexbuffer deserialize
-            // let mut hello_message = message.data.clone().as_slice();
-            match flexbuffers::from_slice::<HelloMessage>(message.data.clone().as_slice()){
-                Ok(hello_message)=>{
-                    info!("[consumer] received (via flexbuffer): {:?}", &hello_message)
-                },
-                Err(e)=>info!("[consumer] flexbuffer deserialize error {:?}", &e)
-            }
-            message.ack(BasicAckOptions::default()).await.expect("ack");
-        }
-    });
-
-    */
     info!("[main] starting producer");
-
-
-
-
-
 
     // publish a message
     let mut s = flexbuffers::FlexbufferSerializer::new();

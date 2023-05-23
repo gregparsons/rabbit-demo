@@ -8,9 +8,10 @@ Departing from the basic Lapin and flatbuffer howtos this simple demo
 - includes the docker run script to run a local broker;
 
 ## Howto
+- docker network create rabbit-test
 - ```docker run -d --rm --hostname host-rabbit --name rabbit -e RABBITMQ_DEFAULT_VHOST=my_vhost -p 5672:5672 -p 15672:15672 rabbitmq:3-management```
-- ```cargo run -p producer```
-- ```cargo run -p consumer```
+- ```make docker_build_consumer;make docker_build_producer; make docker_run_consumer; make_docker_run_producer```
+
 - http://localhost:15672/
 
 ## References

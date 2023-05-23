@@ -43,6 +43,9 @@ async fn main_async()->Result<()>{
     // let addr = std::env::var("AMQP_ADDR").unwrap_or_else(|_| "amqp://127.0.0.1:5672".into());
     let addr = std::env::var("AMQP_ADDR").unwrap_or_else(|_| "amqp://127.0.0.1:5672/my_vhost".into());
 
+    // docker: host-rabbit
+    // let addr = std::env::var("AMQP_ADDR").unwrap_or_else(|_| "amqp://host-rabbit/my_vhost".into());
+
     let conn = Connection::connect(&addr, ConnectionProperties::default()).await?;
     info!("CONNECTED");
 

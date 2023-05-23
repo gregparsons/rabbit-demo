@@ -1,0 +1,14 @@
+# dockerfile_produce
+FROM rust:1.68.2 as builder
+RUN apt-get update && apt-get -y upgrade && apt install lld clang -y
+WORKDIR /app
+COPY . .
+RUN cargo build -p producer --release
+
+# runtime stage
+FROM rust:1.68.2-slim as runtime
+WORKDIR /app
+COPY --from=builder /app/target/release/producer producer
+# COPY producer/.env .
+
+ENTRYPOINT ["./producer"]
