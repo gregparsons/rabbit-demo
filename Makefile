@@ -8,6 +8,5 @@ docker_run_producer:
 docker_run_consumer:
 	docker run --rm --net rabbit-net -e AMQP_ADDR="amqp://host-rabbit/my_vhost" --name consumer consumer
 docker_rabbit:
-	docker run -d --rm --hostname host-rabbit --name rabbit -e RABBITMQ_DEFAULT_VHOST=my_vhost -p 5672:5672 -p 15672:15672 rabbitmq:3-management
+	docker run -d --net rabbit-net --rm --hostname host-rabbit --name rabbit -e RABBITMQ_DEFAULT_VHOST=my_vhost -p 15672:15672 rabbitmq:3-management
 
-docker run -d --net rabbit-net --rm --hostname host-rabbit --name rabbit -e RABBITMQ_DEFAULT_VHOST=my_vhost -p 15672:15672 rabbitmq:3-management

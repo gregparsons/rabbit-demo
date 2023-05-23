@@ -1,16 +1,14 @@
 # RabbitMQ Demo per Lapin
 
-Departing from the basic Lapin and flatbuffer howtos this simple demo 
-- more realistically models microservices talking to each other; 
-- sends a strongly typed message from one to the other;
-- serializes a message using flatbuffers (or json);
-- stamps each message with a uuid;
-- includes the docker run script to run a local broker;
+A simple, but realistic demo deploying producer and consumer microservices using rabbitmq, flatbuffers, tokio, 
+and strongly-typed messages tagged with uuids.
 
 ## Howto
 - docker network create rabbit-test
-- ```docker run -d --rm --hostname host-rabbit --name rabbit -e RABBITMQ_DEFAULT_VHOST=my_vhost -p 5672:5672 -p 15672:15672 rabbitmq:3-management```
-- ```make docker_build_consumer;make docker_build_producer; make docker_run_consumer; make_docker_run_producer```
+- ```make docker_rabbit```
+- ```make docker_build_consumer;make docker_build_producer``` 
+- ```make docker_run_consumer```
+- ```make_docker_run_producer```
 
 - http://localhost:15672/
 
