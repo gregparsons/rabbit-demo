@@ -1,8 +1,9 @@
 # RabbitMQ Demo per Lapin
 
-This builds on the basic Lapin demo in a few ways:
-- sends a strongly typed message
-- serializes the message using flatbuffers or json
+This has long since departed from the the basic Lapin and flatbuffer demos:
+- more realistically models microservices talking to each other 
+- sends a strongly typed message from one to the other
+- serializes the message using flatbuffers (or json)
 - stamps each message with a uuid
 - includes the docker run script to run a local broker
 

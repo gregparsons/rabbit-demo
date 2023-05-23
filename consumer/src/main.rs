@@ -1,6 +1,5 @@
 //! main.rs
 
-use std::thread;
 use std::time::Duration;
 use futures_lite::stream::StreamExt;
 use lapin::{
@@ -59,7 +58,7 @@ async fn main_async()->Result<()>{
         .await?;
 
     // consumer thread
-    let join_handle_consumer = tokio::spawn(async move {
+    // let _join_handle_consumer = tokio::(async move {
         info!("consume");
         while let Some(message_result) = consumer.next().await {
             let message = message_result.expect("error in consumer");
@@ -81,17 +80,18 @@ async fn main_async()->Result<()>{
             }
             message.ack(BasicAckOptions::default()).await.expect("ack");
         }
-    });
-    info!("spawned consumer; spawning publisher");
+    // });
+    info!("spawned consumer");
+    Ok(())
 
     // publish a message
-    let mut s = flexbuffers::FlexbufferSerializer::new();
+    // let mut s = flexbuffers::FlexbufferSerializer::new();
 
     // json -> serde
     // let payload = json!(HelloMessage{message:"Hello, world".to_string()}).to_string();
     // let payload = payload.as_bytes();
 
-    loop {
+/*    loop {
 
         // flexbuffers -> serde
         let flex_hello = HelloMessage{ id:Uuid::new_v4(), message:"Hello, world".to_string()};
@@ -106,7 +106,7 @@ async fn main_async()->Result<()>{
 
         tokio::time::sleep(Duration::from_millis(1000)).await;
 
-    }
+    }*/
 
 
 }
